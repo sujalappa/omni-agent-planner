@@ -32,5 +32,5 @@ RUN mkdir -p /app/uploads && chmod 777 /app/uploads
 # Expose server port
 EXPOSE 8000
 
-# Start server via Uvicorn
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Start server via Uvicorn (resolving dynamic port)
+CMD uvicorn backend.main:app --host 0.0.0.0 --port $PORT

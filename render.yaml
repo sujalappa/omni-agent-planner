@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: omni-agent-planner
+    runtime: docker
+    plan: free
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+        placeholder: "Your Google Gemini API Key"
+      - key: GROQ_API_KEY
+        sync: false
+        placeholder: "Your Groq API Key (Optional)"
+      - key: HF_API_TOKEN
+        sync: false
+        placeholder: "Your Hugging Face API Token (Optional)"
+      - key: SUPABASE_URL
+        sync: false
+        value: "https://tfmepdhcdoftaceywxso.supabase.co"
+      - key: SUPABASE_KEY
+        sync: false
+        value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmbWVwZGhjZG9mdGFjZXl3eHNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDAzOTQsImV4cCI6MjA5NjIxNjM5NH0.msify09OpRms2NjgTujYG2ltU89oFDSqzVb9b0Z5ac0"
+      - key: PORT
+        value: "8000"

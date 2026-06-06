@@ -17,7 +17,7 @@ STATIC_DIR.mkdir(parents=True, exist_ok=True)
 # Configuration values
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_MODEL = "gemini-2.5-flash"
-PORT = 8000
+PORT = int(os.getenv("PORT", 8000))
 HOST = "0.0.0.0"
 
 # Groq and Hugging Face API Credentials (Optional - set here or in environment)
