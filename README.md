@@ -1,6 +1,6 @@
 # Data Smith AI - Multi-Input Agentic Application
 
-🚀 **Live URL:** [https://omni-agent-planner.onrender.com/](https://omni-agent-planner.onrender.com/)
+**Live URL:** [https://omni-agent-planner.onrender.com/](https://omni-agent-planner.onrender.com/)
 
 Data Smith AI is a production-grade, containerized agentic application that accepts multiple input types simultaneously (plain text, images, PDFs, audio recordings), extracts content, understands user intent, and plans and executes multi-step workflows.
 
