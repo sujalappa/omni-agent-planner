@@ -90,29 +90,3 @@ Activate the virtual environment and launch the FastAPI server:
 Open `http://localhost:8000` in your web browser.
 
 ---
-
-## Docker Deployment Guide
-
-The application is containerized and deployable to cloud services such as Render, Railway, AWS, or Hugging Face Spaces (Docker).
-
-### Build and Run with Docker
-1. Build the image:
-   ```bash
-   docker build -t datasmith-ai-agent .
-   ```
-2. Run the container:
-   ```bash
-   docker run -p 8000:8000 \
-     --env GEMINI_API_KEY="your_key" \
-     --env GROQ_API_KEY="your_key" \
-     --env HF_API_TOKEN="your_token" \
-     datasmith-ai-agent
-   ```
-
-### Deploying to Render
-1. Create a new **Web Service** on Render connected to your Git repository.
-2. Select **Docker** as the runtime.
-3. Under **Environment**, add your environment variables:
-   - `GEMINI_API_KEY`, `GROQ_API_KEY`, `HF_API_TOKEN`
-   - `PORT` = `8000`
-4. Render will automatically build the `Dockerfile` and expose the live application URL.
