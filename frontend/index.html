@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Smith AI - Multi-Input Agent</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style sheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar for file upload & status -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fa-solid fa-wand-magic-sparkles logo-icon"></i>
+                    <span>Data Smith AI</span>
+                </div>
+                <p class="subtitle">Multi-Input AI Agent</p>
+            </div>
+
+            <!-- Model Engine Selection -->
+            <div class="section-title">AI Engine Settings</div>
+            <div class="settings-card">
+                <div class="setting-item">
+                    <label for="select-suite"><i class="fa-solid fa-cubes icon-accent"></i> Suite Mode</label>
+                    <select id="select-suite" class="select-input">
+                        <option value="proprietary" selected>Proprietary (Gemini)</option>
+                        <option value="opensource">Open Source (Groq/HF)</option>
+                    </select>
+                </div>
+                <div class="setting-item" style="margin-top: 10px;">
+                    <label for="select-model"><i class="fa-solid fa-microchip icon-accent"></i> Active Model</label>
+                    <select id="select-model" class="select-input">
+                        <option value="gemini-2.5-flash" selected>gemini-2.5-flash (Google)</option>
+                        <option value="gemini-1.5-flash">gemini-1.5-flash (Google)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Upload Area -->
+            <div class="section-title">Upload Sources</div>
+            <div class="upload-dropzone" id="dropzone">
+                <input type="file" id="file-input" multiple accept="image/*,application/pdf,audio/*" style="display: none;">
+                <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                <p class="upload-text">Drag & drop files here</p>
+                <p class="upload-hint">Supports PDF, Image, Audio</p>
+                <button type="button" class="btn-browse" id="btn-browse">Browse Files</button>
+            </div>
+
+            <!-- Active Queue -->
+            <div class="section-title">Files Queue <span class="badge" id="queue-count">0</span></div>
+            <div class="files-queue" id="files-queue">
+                <!-- Dynamic File Cards will render here -->
+                <div class="empty-queue-message">No files selected</div>
+            </div>
+
+            <!-- Cost Estimator Panel -->
+            <div class="cost-estimator-card">
+                <div class="card-header">
+                    <i class="fa-solid fa-coins"></i>
+                    <span>Cost Estimator</span>
+                </div>
+                <div class="cost-grid">
+                    <div class="cost-item">
+                        <span class="label">Input Tokens:</span>
+                        <span class="value" id="cost-input-tokens">0</span>
+                    </div>
+                    <div class="cost-item">
+                        <span class="label">Output Tokens:</span>
+                        <span class="value" id="cost-output-tokens">0</span>
+                    </div>
+                    <div class="cost-item">
+                        <span class="label">Audio Ingest:</span>
+                        <span class="value" id="cost-audio">0s</span>
+                    </div>
+                    <div class="cost-item">
+                        <span class="label">Est. Cost (USD):</span>
+                        <span class="value accent" id="cost-usd">$0.000000</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-estimate" id="btn-estimate" disabled>Estimate Cost</button>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <!-- Header bar -->
+            <header class="workspace-header">
+                <div class="header-info">
+                    <h1>Agent Console</h1>
+                    <span class="status-indicator online">System Ready</span>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-action" id="btn-clear-chat" title="Clear Chat History">
+                        <i class="fa-solid fa-trash-can"></i> Clear Chat
+                    </button>
+                </div>
+            </header>
+
+            <!-- Chat display area -->
+            <div class="chat-container" id="chat-container">
+                <!-- Welcome Message -->
+                <div class="message system-message">
+                    <div class="message-avatar">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <h3>Welcome to Data Smith AI!</h3>
+                        <p>I am an autonomous planning agent. Upload files (PDFs, Images, Audio) and enter instructions to get started. I can:</p>
+                        <ul>
+                            <li>Extract and run OCR/transcriptions automatically.</li>
+                            <li>Resolve links (e.g. YouTube URLs) inside documents.</li>
+                            <li>Chain multiple tools like summaries, sentiments, code analyses, and reasoning.</li>
+                            <li>Ask follow-up clarification questions if instructions are vague.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inspect/Details drawer (Toggled by clicking a message or icon) -->
+            <div class="inspect-panel" id="inspect-panel">
+                <div class="inspect-header">
+                    <h3><i class="fa-solid fa-magnifying-glass-chart"></i> Execution Inspector</h3>
+                    <button class="btn-close-inspect" id="btn-close-inspect">&times;</button>
+                </div>
+                <div class="inspect-tabs">
+                    <button class="tab-btn active" data-tab="tab-trace">Reasoning Trace</button>
+                    <button class="tab-btn" data-tab="tab-content">Extracted Content</button>
+                </div>
+                <div class="inspect-body">
+                    <!-- Tab: Reasoning Trace -->
+                    <div class="tab-content active" id="tab-trace">
+                        <div class="trace-timeline" id="trace-timeline">
+                            <p class="empty-state">Run a query to inspect the agent's tool execution steps.</p>
+                        </div>
+                    </div>
+                    <!-- Tab: Extracted Content -->
+                    <div class="tab-content" id="tab-content">
+                        <div class="extracted-list" id="extracted-list">
+                            <p class="empty-state">Extracted file data will be displayed here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input area -->
+            <footer class="input-area">
+                <form id="query-form" class="query-form">
+                    <div class="input-wrapper">
+                        <button type="button" class="btn-input-file" id="btn-input-file" title="Upload files">
+                            <i class="fa-solid fa-paperclip"></i>
+                        </button>
+                        <textarea 
+                            id="query-text" 
+                            placeholder="Ask me a question or specify a task for the uploaded files..." 
+                            rows="1" 
+                            required
+                        ></textarea>
+                        <button type="submit" class="btn-submit" id="btn-submit">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Spinner Loading Overlay -->
+    <div class="overlay" id="loading-overlay">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <p class="spinner-text">Agent is processing and planning...</p>
+            <p class="spinner-subtext" id="spinner-status">Ingesting files</p>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="js/app.js"></script>
+</body>
+</html>

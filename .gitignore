@@ -1,0 +1,31 @@
+# Python virtual environment
+.venv/
+venv/
+env/
+ENV/
+
+# Configuration and API Keys
+.env
+.env.*
+
+# Local file storage and temporary test assets
+uploads/
+temp_test_assets/
+*.log
+
+# Python cache and builds
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+build/
+dist/
+*.egg-info/
+
+# IDE configurations
+.vscode/
+.idea/
+
+# OS metadata
+.DS_Store
+Thumbs.db
