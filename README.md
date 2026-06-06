@@ -13,35 +13,31 @@ graph TD
     UI[Frontend Client UI] -->|Query + Files + Suite + Model| API[FastAPI Endpoint]
     API --> Ingest[Ingestion Pipeline]
     
-    subgraph Ingest [Ingestion Layer]
-        Ingest -->|pypdf| PDF[PDF Native Text Parser]
-        
-        %% Proprietary Routing
-        Ingest -->|Proprietary Suite| PropOCR[Gemini OCR]
-        Ingest -->|Proprietary Suite| PropSTT[Gemini Audio STT]
-        
-        %% Open Source Routing
-        Ingest -->|Open Source Suite| OSOCR[HF Llama-3.2-Vision OCR]
-        Ingest -->|Open Source Suite| OSSTT[Groq Whisper-Large-V3 STT]
-    end
+    Ingest -->|pypdf| PDF[PDF Native Text Parser]
+    
+    %% Proprietary Routing
+    Ingest -->|Proprietary Suite| PropOCR[Gemini OCR]
+    Ingest -->|Proprietary Suite| PropSTT[Gemini Audio STT]
+    
+    %% Open Source Routing
+    Ingest -->|Open Source Suite| OSOCR[HF Llama-3.2-Vision OCR]
+    Ingest -->|Open Source Suite| OSSTT[Groq Whisper-Large-V3 STT]
 
     Ingest -->|Extracted Context| Agent[Agent Orchestrator]
     
-    subgraph Agent [Agent Core & Registry]
-        Agent -->|Planner Gateway| PlanCheck{Clarification Needed?}
-        PlanCheck -->|Yes| Clarify[Ask Follow-up Question]
-        PlanCheck -->|No| Executor[Executor]
-        
-        Executor -->|Call Tools via LLM Gateway| Tools[Tool Registry]
-        Tools --> Tool1[YouTube Scraper]
-        Tools --> Tool2[Summarizer]
-        Tools --> Tool3[Sentiment Analyzer]
-        Tools --> Tool4[Code Explainer]
-        
-        %% Gateway model routing
-        Executor -->|Proprietary Model| GeminiOpenAI[Gemini 2.5 Flash / 1.5 Flash]
-        Executor -->|Open Source Model| GroqLlama[Llama-3.3-70B on Groq]
-    end
+    Agent -->|Planner Gateway| PlanCheck{Clarification Needed?}
+    PlanCheck -->|Yes| Clarify[Ask Follow-up Question]
+    PlanCheck -->|No| Executor[Executor]
+    
+    Executor -->|Call Tools via LLM Gateway| Tools[Tool Registry]
+    Tools --> Tool1[YouTube Scraper]
+    Tools --> Tool2[Summarizer]
+    Tools --> Tool3[Sentiment Analyzer]
+    Tools --> Tool4[Code Explainer]
+    
+    %% Gateway model routing
+    Executor -->|Proprietary Model| GeminiOpenAI[Gemini 2.5 Flash / 1.5 Flash]
+    Executor -->|Open Source Model| GroqLlama[Llama-3.3-70B on Groq]
     
     Executor -->|Results & Trace| Synth[Synthesizer Gateway]
     Synth -->|Session, Cost, Traces| Supabase[(Supabase DB & Storage)]
